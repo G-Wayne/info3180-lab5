@@ -10,7 +10,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
 from forms import LoginForm
 from models import UserProfile
-from werkzeug.security import check_password_hash
+
 
 
 ###
@@ -60,7 +60,7 @@ def login():
             
             user = UserProfile.query.filter_by(username=username, password=password).first()
             
-            if user is not None and check_password_hash(user.password, password):
+            if user is not None:
                 remember_me = False
 
                 if 'remember_me' in request.form:
@@ -82,6 +82,13 @@ def login():
             
     flash_errors(form)
     return render_template("login.html", form=form)
+    
+    
+@app.route('/secure-page')
+@login_required
+def secure_page():
+    """Render a secure page on our website that only logged in users can access."""
+    return render_template('secure_page.html')
 
 
 # user_loader callback. This callback is used to reload the user object from
